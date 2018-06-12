@@ -40,7 +40,7 @@ When a user wants to delete an item in your application, you want to be sure tha
 In the delete action you want to validate the token with the ``TokenManager::validate()`` method.
 
 ### Validate the user input
-Once a user is posting the form data to your server(s), you'll first need to validate the given token. By default, the field name used by default is ``_token``.
+Once a user is posting the form data to your server(s), you'll first need to validate the given token. By default, the field name used is ``_token``.
 ```php
 <?php
 

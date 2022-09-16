@@ -1,12 +1,13 @@
 language: php
 
 php:
-    - 7.1
-    - 7.2
+    - 7.4
+    - 8.1
 
 install:
   - composer self-update
   - composer install
 
 script:
-  - phpunit
+  - ./vendor/bin/phpcs
+  - ./vendor/bin/phpunit

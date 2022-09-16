@@ -4,6 +4,7 @@ namespace InternetPixels\CSRFProtection\Tests;
 
 use InternetPixels\CSRFProtection\TokenManager;
 use PHPUnit\Framework\TestCase;
+use Exception;
 
 /**
  * Class TokenManagerTest
@@ -11,58 +12,52 @@ use PHPUnit\Framework\TestCase;
  */
 class TokenManagerTest extends TestCase
 {
-
-    private $testSalt = 'P*17OJznMttaR#Zzwi4YhAY!H7hPGUCd';
-
-    private $testKey = 'ERGirehgr4893ur43tjrg98rut98ueowifj';
+    private string $testSalt = 'P*17OJznMttaR#Zzwi4YhAY!H7hPGUCd';
+    private string $testKey = 'ERGirehgr4893ur43tjrg98rut98ueowifj';
 
     /**
      * @var string SHA256 session token
      */
-    private $testSessionToken = 'session_token';
+    private string $testSessionToken = 'session_token';
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Set a user id in the TokenManager!
-     */
-    public function testEmptySalt()
+    public function testEmptySalt(): void
     {
+        self::expectException(Exception::class);
+        self::expectExceptionMessage('Set a user id in the TokenManager!');
+
         TokenManager::create('test');
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Set a salt in the TokenManager!
-     */
-    public function testEmptySalt_WITH_userId()
+    public function testEmptySaltWithuserId(): void
     {
+        self::expectException(Exception::class);
+        self::expectExceptionMessage('Set a salt in the TokenManager!');
+
         TokenManager::setUserId(7);
         TokenManager::create('test');
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Set an action name for this token!
-     */
-    public function testEmptySalt_WITH_emptyName()
+    public function testEmptySaltWithemptyName(): void
     {
+        self::expectException(Exception::class);
+        self::expectExceptionMessage('Set an action name for this token!');
+
         TokenManager::setUserId(7);
         TokenManager::create('');
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Set the session id in the TokenManager!
-     */
-    public function testEmptySalt_WITH_emptySessionToken()
+    public function testEmptySaltWithemptySessionToken(): void
     {
+        self::expectException(Exception::class);
+        self::expectExceptionMessage('Set the session id in the TokenManager!');
+
         TokenManager::setSalt($this->testSalt, $this->testKey);
         TokenManager::setUserId(7);
 
         TokenManager::create('test_action');
     }
 
-    public function testCreateToken()
+    public function testCreateToken(): void
     {
         TokenManager::setSalt($this->testSalt, $this->testKey);
         TokenManager::setUserId(7);
@@ -73,7 +68,7 @@ class TokenManagerTest extends TestCase
         $this->assertEquals(10, strlen($token));
     }
 
-    public function testCreateTokens_WITH_sleep()
+    public function testCreateTokensWithsleep(): void
     {
         TokenManager::setSalt($this->testSalt, $this->testKey);
         TokenManager::setUserId(7);
@@ -90,7 +85,7 @@ class TokenManagerTest extends TestCase
         }
     }
 
-    public function testValidateToken()
+    public function testValidateToken(): void
     {
         TokenManager::setSalt($this->testSalt, $this->testKey);
         TokenManager::setUserId(7);
@@ -101,7 +96,7 @@ class TokenManagerTest extends TestCase
         $this->assertTrue(TokenManager::validate('test_action', $token));
     }
 
-    public function testHtmlField()
+    public function testHtmlField(): void
     {
         TokenManager::setSalt($this->testSalt, $this->testKey);
         TokenManager::setUserId(7);
@@ -113,7 +108,7 @@ class TokenManagerTest extends TestCase
         $this->assertStringEndsWith('" />', $html);
     }
 
-    public function testHtmlFieldValidateToken()
+    public function testHtmlFieldValidateToken(): void
     {
         TokenManager::setSalt($this->testSalt, $this->testKey);
         TokenManager::setUserId(7);
@@ -126,7 +121,7 @@ class TokenManagerTest extends TestCase
         $this->assertTrue(TokenManager::validate('test_action', $matches[1]));
     }
 
-    public function testHtmlField_WITH_customFieldName()
+    public function testHtmlFieldWithcustomFieldName(): void
     {
         TokenManager::setSalt($this->testSalt, $this->testKey);
         TokenManager::setUserId(7);
@@ -137,5 +132,4 @@ class TokenManagerTest extends TestCase
         $this->assertStringStartsWith('<input type="hidden" id="my_field" name="my_field" value="', $html);
         $this->assertStringEndsWith('" />', $html);
     }
-
 }

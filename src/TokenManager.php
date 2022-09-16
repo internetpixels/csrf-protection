@@ -2,29 +2,20 @@
 
 namespace InternetPixels\CSRFProtection;
 
+use function sprintf;
+use function substr;
+
 /**
  * Class TokenManager
  * @package InternetPixels\CSRFProtection
  */
 class TokenManager
 {
+    private const DAY_IN_SECONDS = 86400;
 
-    const DAY_IN_SECONDS = 86400;
-
-    /**
-     * @var string
-     */
-    private static $salt = null;
-
-    /**
-     * @var int
-     */
-    private static $userId;
-
-    /**
-     * @var string
-     */
-    private static $sessionId;
+    private static ?string $salt = null;
+    private static ?int $userId;
+    private static ?string $sessionId;
 
     /**
      * Generate a new token for a user.
@@ -51,9 +42,11 @@ class TokenManager
             throw new \Exception('Set the session id in the TokenManager!');
         }
 
-        $token = substr(self::hash(self::calculateValidation() . '|' . $name . '|' . self::$userId . '|' . self::$sessionId), -12, 10);
-
-        return $token;
+        return substr(
+            self::hash(self::calculateValidation() . '|' . $name . '|' . self::$userId . '|' . self::$sessionId),
+            -12,
+            10
+        );
     }
 
     /**
@@ -85,14 +78,22 @@ class TokenManager
         }
 
         // Nonce was generated 0-12 hours ago
-        $expected = substr(self::hash(self::calculateValidation() . '|' . $name . '|' . self::$userId . '|' . self::$sessionId), -12, 10);
+        $expected = substr(
+            self::hash(self::calculateValidation() . '|' . $name . '|' . self::$userId . '|' . self::$sessionId),
+            -12,
+            10
+        );
 
         if (hash_equals($expected, $token)) {
             return true;
         }
 
         // Nonce was generated 12-24 hours ago
-        $expected = substr(self::hash((self::calculateValidation() - 1) . '|' . $name . '|' . self::$userId . '|' . self::$sessionId), -12, 10);
+        $expected = substr(
+            self::hash((self::calculateValidation() - 1) . '|' . $name . '|' . self::$userId . '|' . self::$sessionId),
+            -12,
+            10
+        );
 
         if (hash_equals($expected, $token)) {
             return true;
@@ -152,5 +153,4 @@ class TokenManager
     {
         return ceil(time() / (self::DAY_IN_SECONDS / 2));
     }
-
 }
